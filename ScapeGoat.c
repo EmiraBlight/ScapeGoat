@@ -41,7 +41,7 @@ void freeScapeGoat(const struct scapeGoat* scapeGoat) {
 
     destroyScapeGoatHelper(scapeGoat->root);
 
-  free((void *)scapeGoat); //I...this is dumb ngl
+  free((void *)scapeGoat); //...this is dumb ngl
 
 
 }
@@ -121,17 +121,6 @@ int insert(struct scapeGoat* tree, const int data) {
 
 }
 
-struct node* getSuccessor(struct node* currNode) {
-  //gets successor of node and returns pointer to it
-  if (currNode == NULL || currNode->right == NULL) {
-    return currNode;
-  }
-  currNode = currNode->right;
-  while (currNode != NULL && currNode->left != NULL) {
-    currNode = currNode->left;
-  }
-  return currNode;
-}
 
 int deleteNode(const struct scapeGoat* tree, const int data) {
   if (tree->root == NULL) { //if tree is empty it's not removed
@@ -225,8 +214,8 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
   else {
     current->right = temp->right;
   }
-  current->data = temp->data; //honestly I forgot how to do the way that actually switches the nodes...I opted for the choice
-  free(temp);//that just moves the data because I remember how that works
+  current->data = temp->data; //honestly I forgot how to do the way that actually switches the nodes for two child and successor...I opted for the
+  free(temp);//version that just moves the data because I remember how that works
   return 0;
 
 }
