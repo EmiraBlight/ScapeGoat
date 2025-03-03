@@ -15,5 +15,6 @@ int main(void) {
     deleteNode(tree,15);
     printf("Search for 15: %p\n",(void*)search(tree,15));
     inorder(tree);
-    freeScapeGoat(tree);
+    tree = freeScapeGoat(tree);
+    inorder(tree);
 }

@@ -27,13 +27,17 @@ struct node{
 
 
 struct scapeGoat * createScapeGoat(void);
-void freeScapeGoat(const struct scapeGoat *scapeGoat);
+struct scapeGoat* freeScapeGoat(const struct scapeGoat *scapeGoat);
 struct node* createNode(int data);
 
 struct node* search(const struct scapeGoat* tree, int data);
 
 int insert(struct scapeGoat* tree, int data);
 int deleteNode(const struct scapeGoat* tree, int data);
+
+struct node* flatten(struct node* root);
+struct node* rebuild(struct node* root);
+int size(const struct node* root);
 
 
 #endif //SCAPEGOAT_H

@@ -33,17 +33,18 @@ void destroyScapeGoatHelper(struct node* node) {
   free(node);
 }
 
-void freeScapeGoat(const struct scapeGoat* scapeGoat) {
+struct scapeGoat* freeScapeGoat(const struct scapeGoat* scapeGoat) {
 
+  //frees the whole tree and returns NULL
   if (scapeGoat == NULL) {
-    return;
+    return NULL;
   }
 
     destroyScapeGoatHelper(scapeGoat->root);
 
+
   free((void *)scapeGoat); //...this is dumb ngl
-
-
+  return NULL;
 }
 
 struct node* search(const struct scapeGoat* tree, const int data) {
@@ -94,10 +95,21 @@ int insert(struct scapeGoat* tree, const int data) {
     return -1;
   }
 
-  //just based it on wikipedia pseudocode
+  struct node *stack[64]; //64 nodes deep is far more than what I think I will need
+
+  for(int i = 0; i < 64; i++) {
+    stack[i] = NULL;
+  }
+
+  int index = 0;
+  stack[0] = tree->root;
+  index++;
+
 
   struct node* y = NULL;
   struct node* x = tree->root;
+
+
 
   while (x != NULL) {
     y = x;
@@ -106,6 +118,8 @@ int insert(struct scapeGoat* tree, const int data) {
     } else {
       x = x->left;
     }
+    stack[index] = x;
+    index++;
   }
   if (y == NULL) {
     tree->root = newNode;
@@ -117,6 +131,7 @@ int insert(struct scapeGoat* tree, const int data) {
   }
 
   y->right = newNode;
+
   return 0;
 
 }
@@ -150,7 +165,7 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
     parent = tree->root;
   }
 
-  if (current->left == NULL && current->right == NULL) { //simple case, deleting a leaf
+  else if (current->left == NULL && current->right == NULL) { //simple case, deleting a leaf
     free(current);
     if (data>parent->data) {
       parent->right = NULL;
@@ -158,10 +173,10 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
     else {
       parent->left = NULL;
     }
-    return 0;
+
   }
 
-  if (current->left == NULL) { //one child, on the right
+  else if (current->left == NULL) { //one child, on the right
     struct node* temp = current->right;
     free(current);
     if (data > parent->data) {
@@ -170,11 +185,11 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
     else {
       parent->left = temp;
     }
-    return 0;
+
   }
 
 
-  if (current->right == NULL) { //one child, on the left
+  else if (current->right == NULL) { //one child, on the left
     struct node* temp = current->left;
     free(current);
     if (data > parent->data) {
@@ -183,12 +198,11 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
     else {
       parent->left = temp;
     }
-    return 0;
   }
 
   //now we have the last case, two children
 
-  if (current->right->left == NULL) { //if right child has no successor (its smallest in its subtree)
+  else if (current->right->left == NULL ) { //if right child has no successor (its smallest in its subtree)
     struct node* temp = current->right;
     temp->left = current->left;
     free(current);
@@ -198,24 +212,42 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
     else {
       parent->left = temp;
     }
+
+  }
+  else {
+    struct node* p = NULL;
+    struct node* temp = current->right;
+    while (temp->left != NULL) {
+      p = temp;
+      temp = temp->left;
+    }
+
+    if (p!=NULL) {
+      p->left = temp->right;
+    }
+    else {
+      current->right = temp->right;
+    }
+    current->data = temp->data; //honestly I forgot how to do the way that actually switches the nodes for two child and successor...I opted for the
+    free(temp);//version that just moves the data because I remember how that works
+  }
+
+
+ //scapegoat logic
+
+  return 0;
+
+
+}
+
+
+int size(const struct node* root){
+
+  if (root == NULL) {
     return 0;
   }
 
-  struct node* p = NULL;
-  struct node* temp = current->right;
-  while (temp->left != NULL) {
-    p = temp;
-    temp = temp->left;
-  }
-
-  if (p!=NULL) {
-    p->left = temp->right;
-  }
-  else {
-    current->right = temp->right;
-  }
-  current->data = temp->data; //honestly I forgot how to do the way that actually switches the nodes for two child and successor...I opted for the
-  free(temp);//version that just moves the data because I remember how that works
-  return 0;
+  return 1 + size(root->left) + size(root->right);
 
 }
+

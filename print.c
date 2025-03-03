@@ -16,7 +16,11 @@ void inOrderHelper(const struct node* n) {
 
 
 void inorder(const struct scapeGoat* tree) {
+    if (tree == NULL) {
+        return;
+    }
     inOrderHelper(tree->root);
+    printf("\n");
 }
 
 void preOderHelper(const struct node* n) {
@@ -30,6 +34,7 @@ void preOderHelper(const struct node* n) {
 
 void preorder(const struct scapeGoat* tree) {
     preOderHelper(tree->root);
+    printf("\n");
 }
 
 void postorderHelper(const struct node* n) {
@@ -42,4 +47,5 @@ void postorderHelper(const struct node* n) {
 
 void postorder(const struct scapeGoat* n) {
     postorderHelper(n->root);
+    printf("\n");
 }
