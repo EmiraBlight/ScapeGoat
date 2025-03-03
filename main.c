@@ -10,12 +10,7 @@ int main(void) {
     insert(tree,8);
     insert(tree,11);
     insert(tree,18);
-    inorder(tree);
-    printf("\nSearch for 15: %p\n",(void*)search(tree,15));
-    deleteNode(tree,15);
-    deleteNode(tree,5);
-    printf("Search for 15: %p\n",(void*)search(tree,15));
-    inorder(tree);
-    tree = freeScapeGoat(tree);
-    inorder(tree);
+    struct node* test = flatten(tree->root);
+    struct node* test2 = rebuildTree(5,test);
+    printf("flattened tree:\n");
 }

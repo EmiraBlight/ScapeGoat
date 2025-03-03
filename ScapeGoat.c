@@ -5,6 +5,8 @@
 
 #include "ScapeGoat.h"
 #include <stdlib.h>
+#include <math.h>
+#define LOG32(n) (log(n) / log(3.0/2.0))
 
 struct scapeGoat * createScapeGoat(void){
 
@@ -123,21 +125,29 @@ int insert(struct scapeGoat* tree, const int data) {
   }
   if (y == NULL) {
     tree->root = newNode;
-    return 0;
+
   }
-  if (data < y->data) {
+  else if (data < y->data) {
     y->left = newNode;
-    return 0;
+
+  }
+  else {
+    y->right = newNode;
+    tree->q = pow(2, index);
+
   }
 
-  y->right = newNode;
+  tree->n++;
+  tree->q++;
+
+  //add scape goat logic
 
   return 0;
 
 }
 
 
-int deleteNode(const struct scapeGoat* tree, const int data) {
+int deleteNode(struct scapeGoat* tree, const int data) {
   if (tree->root == NULL) { //if tree is empty it's not removed
     return -1;
   }
@@ -246,6 +256,7 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
     free(temp);//version that just moves the data because I remember how that works
   }
 
+  tree->n--;
 
  //scapegoat logic
 
@@ -262,6 +273,56 @@ int size(const struct node* root){
   }
 
   return 1 + size(root->left) + size(root->right);
+
+}
+
+
+struct node* flattenHelper(struct node* x,struct node* y) {
+
+  if (x==NULL) {
+    return y;
+  }
+
+  x->right = flattenHelper(x->right,y);
+  return flattenHelper(x->left,x);
+
+}
+
+struct node* flatten(struct node* tree) {
+  if (tree == NULL) {
+    return NULL;
+  }
+  tree = flattenHelper(tree,NULL);
+  struct node* result = tree;
+  while (result &&result->right != NULL) {
+    result->left = NULL;
+    result = result->right;
+  }
+  return tree;
+}
+
+struct node* rebuildTree(const int n,struct node* x) {
+
+  if (x == NULL) {
+    return NULL;
+  }
+
+  if (n==0) {
+      x->left = NULL;
+    return x;
+  }
+
+  struct node* r = rebuildTree(ceil((n-1)/2.0),x);
+
+
+    struct node* s = rebuildTree(((n-1)/2),r->right);
+
+
+      r->right = s->left;
+      s->left = r;
+
+
+  return s;
 
 }
 

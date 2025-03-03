@@ -33,11 +33,12 @@ struct node* createNode(int data);
 struct node* search(const struct scapeGoat* tree, int data);
 
 int insert(struct scapeGoat* tree, int data);
-int deleteNode(const struct scapeGoat* tree, int data);
+int deleteNode(struct scapeGoat* tree, int data);
 
-struct node* flatten(struct node* root);
-struct node* rebuild(struct node* root);
+struct node* flatten(struct node* x);
 int size(const struct node* root);
+
+struct node* rebuildTree(int n,struct node* x);
 
 
 #endif //SCAPEGOAT_H
