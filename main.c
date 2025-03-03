@@ -13,6 +13,7 @@ int main(void) {
     inorder(tree);
     printf("\nSearch for 15: %p\n",(void*)search(tree,15));
     deleteNode(tree,15);
+    deleteNode(tree,5);
     printf("Search for 15: %p\n",(void*)search(tree,15));
     inorder(tree);
     tree = freeScapeGoat(tree);

@@ -141,8 +141,20 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
   if (tree->root == NULL) { //if tree is empty it's not removed
     return -1;
   }
+
+  struct node* stack[64];
+  int index = 0;
+  for (int i = 0; i < 64; i++) {
+    stack[i] = NULL;
+  }
+
+
+
   struct node* parent = NULL;
   struct node* current = tree->root;
+  stack[0] = tree->root;
+  index++;
+
 
   while (current && current->data != data) {
 
@@ -154,6 +166,8 @@ int deleteNode(const struct scapeGoat* tree, const int data) {
     else {
       current = current->right;
     }
+    stack[index] = current;
+    index++;
   }
 
   //we are now at the node we want to delete, and we have its parent.
