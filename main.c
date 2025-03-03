@@ -3,14 +3,16 @@
 
 int main(void) {
     struct scapeGoat *tree = createScapeGoat();
-    insert(tree,10);
-    insert(tree,7);
-    insert(tree,15);
-    insert(tree,5);
-    insert(tree,8);
-    insert(tree,11);
-    insert(tree,18);
+    for (int i = 0; i < 32; i++) {
+        insert(tree, i);
+    }
+    for (int i = 32; i >16; i--) {
+        deleteNode(tree, i);
+    }
+    deleteNode(tree, 16);
+    deleteNode(tree, 15);
+    deleteNode(tree, 14);
     struct node* test = flatten(tree->root);
-    struct node* test2 = rebuildTree(5,test);
+    struct node* test2 = rebuiltTree(3,test);
     printf("flattened tree:\n");
 }

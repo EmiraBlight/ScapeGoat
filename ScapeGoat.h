@@ -38,7 +38,7 @@ int deleteNode(struct scapeGoat* tree, int data);
 struct node* flatten(struct node* x);
 int size(const struct node* root);
 
-struct node* rebuildTree(int n,struct node* x);
-
+struct node* rebuildTreeHelper(int n,struct node* x);
+struct node* rebuiltTree(int n, struct node* scapeGoat);
 
 #endif //SCAPEGOAT_H

@@ -4,6 +4,7 @@
 
 
 #include "ScapeGoat.h"
+#include <limits.h>
 #include <stdlib.h>
 #include <math.h>
 #define LOG32(n) (log(n) / log(3.0/2.0))
@@ -19,8 +20,8 @@ struct scapeGoat * createScapeGoat(void){
     }
 
     newTree->root = NULL;
-    newTree->n = 1;
-    newTree->q = 2;
+    newTree->n = 0;
+    newTree->q = 0;
 
     return newTree;
 
@@ -133,7 +134,6 @@ int insert(struct scapeGoat* tree, const int data) {
   }
   else {
     y->right = newNode;
-    tree->q = pow(2, index);
 
   }
 
@@ -258,6 +258,13 @@ int deleteNode(struct scapeGoat* tree, const int data) {
 
   tree->n--;
 
+
+  if (tree->n<(tree->q/2)) {
+
+    tree->root = rebuiltTree(tree->n,tree->root);
+    tree->q = tree->n;
+  }
+
  //scapegoat logic
 
   return 0;
@@ -301,7 +308,7 @@ struct node* flatten(struct node* tree) {
   return tree;
 }
 
-struct node* rebuildTree(const int n,struct node* x) {
+struct node* rebuildTreeHelper(const int n,struct node* x) {
 
   if (x == NULL) {
     return NULL;
@@ -312,10 +319,10 @@ struct node* rebuildTree(const int n,struct node* x) {
     return x;
   }
 
-  struct node* r = rebuildTree(ceil((n-1)/2.0),x);
+  struct node* r = rebuildTreeHelper(ceil((n-1)/2.0),x);
 
 
-    struct node* s = rebuildTree(((n-1)/2),r->right);
+    struct node* s = rebuildTreeHelper(floor((n-1)/2),r->right);
 
 
       r->right = s->left;
@@ -326,3 +333,11 @@ struct node* rebuildTree(const int n,struct node* x) {
 
 }
 
+struct node* rebuiltTree(const int n, struct node* scapeGoat) {
+
+  struct node* w = createNode(INT_MAX);
+  struct node* z = flattenHelper(scapeGoat,w);
+  rebuildTreeHelper(n,z);
+
+  return w->left;
+}
