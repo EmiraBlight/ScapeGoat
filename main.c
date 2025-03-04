@@ -3,12 +3,11 @@
 
 int main(void) {
     struct scapeGoat* tree = createScapeGoat();
-    int quit = 1;
 
     char first;
     int second;
     char third;
-    while (quit) {
+    while (1) {
         scanf(" %c", &first);
         if (first == 'q') {
             freeScapeGoat(tree);
