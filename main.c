@@ -2,17 +2,56 @@
 #include "print.c"
 
 int main(void) {
-    struct scapeGoat *tree = createScapeGoat();
-    for (int i = 0; i < 32; i++) {
-        insert(tree, i);
+    struct scapeGoat* tree = createScapeGoat();
+    int quit = 1;
+
+    char first;
+    int second;
+    char third;
+    while (quit) {
+        scanf(" %c", &first);
+        if (first == 'q') {
+            freeScapeGoat(tree);
+            return 0;
+        }
+
+        if (first == 'e') {
+            destroyScapeGoatHelper(tree->root);
+        }
+        if (first == 't') {
+            scanf(" %c", &third);
+        }
+        else {
+            scanf("%d", &second);
+        }
+        if (first == 'i') {
+            insert(tree, second);
+        }
+        if (first == 'd') {
+            deleteNode(tree, second);
+        }
+        if (first == 's') {
+            const struct node* found = search(tree, second);
+            if (found) {
+                printf("%d is present", second);
+            }
+            else{
+                printf("%d is missing", second);
+            }
+        }
+
+        if (first == 't') {
+            if (third == 'i') {
+                inorder(tree);
+            }
+            else if (third == 'l') {
+                preorder(tree);
+            }
+            else if (third == 'r') {
+                postorder(tree);
+            }
+        }
+
+
     }
-    for (int i = 32; i >16; i--) {
-        deleteNode(tree, i);
-    }
-    deleteNode(tree, 16);
-    deleteNode(tree, 15);
-    deleteNode(tree, 14);
-    struct node* test = flatten(tree->root);
-    struct node* test2 = rebuiltTree(3,test);
-    printf("flattened tree:\n");
 }

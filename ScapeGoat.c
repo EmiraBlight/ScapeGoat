@@ -27,7 +27,7 @@ struct scapeGoat * createScapeGoat(void){
 
   }
 
-void destroyScapeGoatHelper(struct node* node) {
+void destroyScapeGoatHelper(struct node *node) {
   if(node == NULL) {
     return;
   }
@@ -139,8 +139,35 @@ int insert(struct scapeGoat* tree, const int data) {
 
   tree->n++;
   tree->q++;
-
+  index--;
+  stack[index] = newNode;
   //add scape goat logic
+  if (index >LOG32(tree->q) && tree->n >2) {
+    int sizeOfNode =  size(stack[index]);
+    int sizeOfParent = ceil(size(stack[index-1]));
+    while ((float)sizeOfNode <= ceil((sizeOfParent*0.6666666))) {
+    index--;
+      sizeOfNode =  sizeOfParent;
+      sizeOfParent = size(stack[index-1]);
+    }
+
+    struct node* newTree =  rebuiltTree(size(stack[index-1]),stack[index-1]);
+
+    if (index < 2) {
+      tree->root = newTree;
+    }
+    else {
+      if (newTree->data > stack[index-2]->data) {
+        stack[index-2]->right = newTree;
+      }
+      else {
+        stack[index-2]->left = newTree;
+      }
+    }
+
+    tree->q = tree->n;
+
+  }
 
   return 0;
 
@@ -186,7 +213,10 @@ int deleteNode(struct scapeGoat* tree, const int data) {
     return -1; //not found in the tree
   }
   if (parent == NULL) {
-    parent = tree->root;
+    free(tree->root); //tree only has 1 node
+    tree->root = NULL;
+    tree->n--;
+    return 0;
   }
 
   else if (current->left == NULL && current->right == NULL) { //simple case, deleting a leaf
