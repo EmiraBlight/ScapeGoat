@@ -2,36 +2,19 @@
 
 CC = gcc
 
-CFLAGS = -Wall -std=c99 -pedantic
 
+build: main.o
+	$(CC) -Wall -std=c99 -pedantic -o  scapeGoat main.o ScapeGoat.o -lm
 
+main.o: main.c ScapeGoat.c ScapeGoat.h
+	$(CC) -Wall -std=c99 -pedantic  -c main.c ScapeGoat.c
 
-
-
-
-main.o: main.c
-	$(CC) $(CFlags) -c main.c
-
-
-
-
-
-
-print.o:
-	$(CC) $(CFlags) -c print.c
-ScapeGoat.o:
-	$(CC) $(CFlags) -c ScapeGoat.c
-
-
-build: main.o ScapeGoat.o print.o
-
-	$(CC) $(CFLAGS) -o scapeGoat main.o
-
-
-# Rule to compile each object file
 
 run: build
 	./scapeGoat
+
+test: build
+	./scapeGoat < atest
 
 
 clean:

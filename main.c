@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include "print.c"
+
+#include "ScapeGoat.h"
 
 int main(void) {
     struct scapeGoat* tree = createScapeGoat();
@@ -15,13 +15,14 @@ int main(void) {
         }
 
         if (first == 'e') {
-            destroyScapeGoatHelper(tree->root);
+            freeScapeGoat(tree);
+            tree = createScapeGoat();
         }
         if (first == 't') {
             scanf(" %c", &third);
         }
         else {
-            scanf("%d", &second);
+            scanf("%i", &second);
         }
         if (first == 'i') {
             insert(tree, second);
@@ -37,9 +38,11 @@ int main(void) {
             else{
                 printf("%d is missing", second);
             }
+            printf("\n");
         }
 
         if (first == 't') {
+
             if (third == 'i') {
                 inorder(tree);
             }

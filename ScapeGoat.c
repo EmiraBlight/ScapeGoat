@@ -3,10 +3,9 @@
 //
 
 
+
+
 #include "ScapeGoat.h"
-#include <limits.h>
-#include <stdlib.h>
-#include <math.h>
 #define LOG32(n) (log(n) / log(3.0/2.0))
 
 struct scapeGoat * createScapeGoat(void){
@@ -84,7 +83,6 @@ struct node* createNode(int data){
 }
 
 int insert(struct scapeGoat* tree, const int data) {
-
   //insert a new node into tree. returns non 0 if fails, returns 0 if it worked
 
   if (tree == NULL) {
@@ -142,6 +140,8 @@ int insert(struct scapeGoat* tree, const int data) {
   index--;
   stack[index] = newNode;
   //add scape goat logic
+
+
   if (index >LOG32(tree->q) && tree->n >2) {
     int sizeOfNode =  size(stack[index]);
     int sizeOfParent = ceil(size(stack[index-1]));
@@ -150,12 +150,18 @@ int insert(struct scapeGoat* tree, const int data) {
       sizeOfNode =  sizeOfParent;
       sizeOfParent = size(stack[index-1]);
     }
+    struct node* newTree;
 
-    struct node* newTree =  rebuiltTree(size(stack[index-1]),stack[index-1]);
-
-    if (index < 2) {
-      tree->root = newTree;
+    if (index >0){
+    newTree =  rebuiltTree(size(stack[index-1]),stack[index-1]);
     }
+
+    if (index <= 0) { // recreating from root
+      tree->root = rebuiltTree(size(tree->root),tree->root);
+      tree->q = tree->n;
+      return 0;
+    }
+
     else {
       if (newTree->data > stack[index-2]->data) {
         stack[index-2]->right = newTree;
@@ -179,18 +185,11 @@ int deleteNode(struct scapeGoat* tree, const int data) {
     return -1;
   }
 
-  struct node* stack[64];
-  int index = 0;
-  for (int i = 0; i < 64; i++) {
-    stack[i] = NULL;
-  }
 
 
 
-  struct node* parent = NULL;
+  struct node* parent =  NULL;
   struct node* current = tree->root;
-  stack[0] = tree->root;
-  index++;
 
 
   while (current && current->data != data) {
@@ -203,8 +202,6 @@ int deleteNode(struct scapeGoat* tree, const int data) {
     else {
       current = current->right;
     }
-    stack[index] = current;
-    index++;
   }
 
   //we are now at the node we want to delete, and we have its parent.
@@ -212,12 +209,49 @@ int deleteNode(struct scapeGoat* tree, const int data) {
   if (current == NULL) {
     return -1; //not found in the tree
   }
-  if (parent == NULL) {
-    free(tree->root); //tree only has 1 node
-    tree->root = NULL;
-    tree->n--;
-    return 0;
-  }
+  if (parent == NULL) { //removing head
+    struct node * toBeDeleted = tree->root;
+
+     if (tree->root->left == NULL && tree->root->right == NULL) { //no kids
+       free(toBeDeleted);
+       tree->root = NULL;
+     }
+
+    else if (tree->root->left == NULL) {
+      tree->root = tree->root->right;
+      free(toBeDeleted);
+    }
+    else if (tree->root->right == NULL) {
+      tree->root =tree->root->left;
+      free(toBeDeleted);
+    }
+    else { //two kids
+
+      struct node *scanner = tree->root->right;
+      struct node *parentOfSuccessor = NULL;
+
+      while (scanner->left != NULL) {
+        parentOfSuccessor = scanner;
+        scanner = scanner->left;
+      }
+
+      tree->root->data = scanner->data;
+
+      if (parentOfSuccessor != NULL) {
+        parentOfSuccessor->left = scanner->right;
+      } else {
+        tree->root->right = scanner->right;
+      }
+
+      free(scanner); //copy paste it like the non head version
+      tree->n --;
+
+
+
+
+      }
+
+    }
 
   else if (current->left == NULL && current->right == NULL) { //simple case, deleting a leaf
     free(current);
@@ -295,7 +329,6 @@ int deleteNode(struct scapeGoat* tree, const int data) {
     tree->q = tree->n;
   }
 
- //scapegoat logic
 
   return 0;
 
@@ -370,4 +403,51 @@ struct node* rebuiltTree(const int n, struct node* scapeGoat) {
   rebuildTreeHelper(n,z);
 
   return w->left;
+}
+
+void inOrderHelper(const struct node* n) {
+
+  if (n != NULL) {
+    inOrderHelper(n->left);
+    printf("%d ", n->data);
+    inOrderHelper(n->right);
+  }
+
+}
+
+
+
+void inorder(const struct scapeGoat* tree) {
+  if (tree == NULL) {
+    return;
+  }
+  inOrderHelper(tree->root);
+  printf("\n");
+}
+
+void preOderHelper(const struct node* n) {
+  if (n != NULL) {
+    printf("%d ", n->data);
+    inOrderHelper(n->left);
+    inOrderHelper(n->right);
+  }
+}
+
+
+void preorder(const struct scapeGoat* tree) {
+  preOderHelper(tree->root);
+  printf("\n");
+}
+
+void postorderHelper(const struct node* n) {
+  if (n != NULL) {
+    postorderHelper(n->left);
+    postorderHelper(n->right);
+    printf("%d ", n->data);
+  }
+}
+
+void postorder(const struct scapeGoat* n) {
+  postorderHelper(n->root);
+  printf("\n");
 }

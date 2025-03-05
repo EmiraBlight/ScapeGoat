@@ -5,7 +5,10 @@
 #ifndef SCAPEGOAT_H
 
 #define SCAPEGOAT_H
-
+#include <limits.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdio.h>
 
 
 struct scapeGoat {
@@ -40,5 +43,9 @@ int size(const struct node* root);
 
 struct node* rebuildTreeHelper(int n,struct node* x);
 struct node* rebuiltTree(int n, struct node* scapeGoat);
+
+void inorder(const struct scapeGoat* tree);
+void preorder(const struct scapeGoat* tree);
+void postorder(const struct scapeGoat* tree);
 
 #endif //SCAPEGOAT_H
