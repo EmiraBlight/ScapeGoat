@@ -14,10 +14,11 @@ run: build
 	./scapeGoat
 
 test: build
-	./scapeGoat < atest
+	python3 testC.py ./scapeGoat tests
 
 
 clean:
 
 	rm -f freq *.o
 	rm -f scapeGoat
+	clear

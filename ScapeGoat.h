@@ -47,5 +47,5 @@ struct node* rebuiltTree(int n, struct node* scapeGoat);
 void inorder(const struct scapeGoat* tree);
 void preorder(const struct scapeGoat* tree);
 void postorder(const struct scapeGoat* tree);
-
+void preOrderHelper(const struct node* n);
 #endif //SCAPEGOAT_H

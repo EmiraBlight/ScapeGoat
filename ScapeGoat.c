@@ -27,6 +27,7 @@ struct scapeGoat * createScapeGoat(void){
   }
 
 void destroyScapeGoatHelper(struct node *node) {
+  //helps destroy scapegoat node by node in post order traversal
   if(node == NULL) {
     return;
   }
@@ -50,6 +51,7 @@ struct scapeGoat* freeScapeGoat(const struct scapeGoat* scapeGoat) {
 }
 
 struct node* search(const struct scapeGoat* tree, const int data) {
+  //searches tree for node of value data. If fonnd it retuns a pointer to the node, if not returns NULL
   struct node* current = tree->root;
   while(current != NULL) {
     if(current->data == data) {
@@ -137,33 +139,37 @@ int insert(struct scapeGoat* tree, const int data) {
 
   tree->n++;
   tree->q++;
+
   index--;
   stack[index] = newNode;
   //add scape goat logic
+  if (index >LOG32(tree->q)) { //checks if needs to scapegoat
+    double sizeOfNode =  size(stack[index]);
+    double sizeOfParent = (size(stack[index-1]));
 
 
-  if (index >LOG32(tree->q) && tree->n >2) {
-    int sizeOfNode =  size(stack[index]);
-    int sizeOfParent = ceil(size(stack[index-1]));
-    while ((float)sizeOfNode <= ceil((sizeOfParent*0.6666666))) {
-    index--;
+    while (sizeOfNode <= ((sizeOfParent*2))/3) { //current index is the child of scapegoat
+      index--;
       sizeOfNode =  sizeOfParent;
       sizeOfParent = size(stack[index-1]);
-    }
+
+    };
     struct node* newTree;
 
-    if (index >0){
-    newTree =  rebuiltTree(size(stack[index-1]),stack[index-1]);
-    }
 
-    if (index <= 0) { // recreating from root
+
+    if (index >1){
+    newTree =  rebuiltTree(size(stack[index-1]),stack[index-1]); //if were not rebuilding from root, then make a new subtree
+
+    }
+    if (index <= 1) { // recreating from root
       tree->root = rebuiltTree(size(tree->root),tree->root);
       tree->q = tree->n;
       return 0;
     }
 
     else {
-      if (newTree->data > stack[index-2]->data) {
+      if (newTree->data > stack[index-2]->data) { //attach new subtree
         stack[index-2]->right = newTree;
       }
       else {
@@ -171,7 +177,6 @@ int insert(struct scapeGoat* tree, const int data) {
       }
     }
 
-    tree->q = tree->n;
 
   }
 
@@ -181,11 +186,12 @@ int insert(struct scapeGoat* tree, const int data) {
 
 
 int deleteNode(struct scapeGoat* tree, const int data) {
+  //removes a node from tree, if its present
+
+
   if (tree->root == NULL) { //if tree is empty it's not removed
     return -1;
   }
-
-
 
 
   struct node* parent =  NULL;
@@ -202,7 +208,7 @@ int deleteNode(struct scapeGoat* tree, const int data) {
     else {
       current = current->right;
     }
-  }
+  } //current is now the node were going to delete
 
   //we are now at the node we want to delete, and we have its parent.
 
@@ -245,9 +251,6 @@ int deleteNode(struct scapeGoat* tree, const int data) {
 
       free(scanner); //copy paste it like the non head version
       tree->n --;
-
-
-
 
       }
 
@@ -323,8 +326,11 @@ int deleteNode(struct scapeGoat* tree, const int data) {
   tree->n--;
 
 
-  if (tree->n<(tree->q/2)) {
+    double Ncomp = (double)tree->n;
+    double Qcomp = (double)tree->q/2;
 
+
+  if (Ncomp<Qcomp) { //scapegoat from root if needed
     tree->root = rebuiltTree(tree->n,tree->root);
     tree->q = tree->n;
   }
@@ -337,7 +343,7 @@ int deleteNode(struct scapeGoat* tree, const int data) {
 
 
 int size(const struct node* root){
-
+  //returns size of given node
   if (root == NULL) {
     return 0;
   }
@@ -349,6 +355,8 @@ int size(const struct node* root){
 
 struct node* flattenHelper(struct node* x,struct node* y) {
 
+  //helps flatten a subtree
+
   if (x==NULL) {
     return y;
   }
@@ -359,19 +367,19 @@ struct node* flattenHelper(struct node* x,struct node* y) {
 }
 
 struct node* flatten(struct node* tree) {
+  //takes a tree and returns a singly linked list of tree nodes
+
+
   if (tree == NULL) {
     return NULL;
   }
   tree = flattenHelper(tree,NULL);
-  struct node* result = tree;
-  while (result &&result->right != NULL) {
-    result->left = NULL;
-    result = result->right;
-  }
   return tree;
 }
 
 struct node* rebuildTreeHelper(const int n,struct node* x) {
+
+  //helps rebuild tree
 
   if (x == NULL) {
     return NULL;
@@ -398,7 +406,10 @@ struct node* rebuildTreeHelper(const int n,struct node* x) {
 
 struct node* rebuiltTree(const int n, struct node* scapeGoat) {
 
-  struct node* w = createNode(INT_MAX);
+  //takes a size and a single linked list and retuns a balanced binary tree
+
+  struct node dummy = {INT_MAX,NULL,NULL};//cant malloc here or it will make a mem leak
+  struct node* w = &dummy;
   struct node* z = flattenHelper(scapeGoat,w);
   rebuildTreeHelper(n,z);
 
@@ -418,6 +429,7 @@ void inOrderHelper(const struct node* n) {
 
 
 void inorder(const struct scapeGoat* tree) {
+  //prints tree in order
   if (tree == NULL) {
     return;
   }
@@ -425,17 +437,18 @@ void inorder(const struct scapeGoat* tree) {
   printf("\n");
 }
 
-void preOderHelper(const struct node* n) {
+void preOrderHelper(const struct node* n) {
   if (n != NULL) {
     printf("%d ", n->data);
-    inOrderHelper(n->left);
-    inOrderHelper(n->right);
+    preOrderHelper(n->left);
+    preOrderHelper(n->right);
   }
 }
 
 
 void preorder(const struct scapeGoat* tree) {
-  preOderHelper(tree->root);
+  //prints tree in preoder
+  preOrderHelper(tree->root);
   printf("\n");
 }
 
@@ -448,6 +461,9 @@ void postorderHelper(const struct node* n) {
 }
 
 void postorder(const struct scapeGoat* n) {
+  //prints tree in post order
   postorderHelper(n->root);
   printf("\n");
 }
+
+
