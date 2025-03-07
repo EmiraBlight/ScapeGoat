@@ -1,1 +1,0 @@
-CMakeLists.txt not found in /Users/emira/CLionProjects/ScapeGoat Select CMakeLists.txt
