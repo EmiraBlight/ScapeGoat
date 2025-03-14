@@ -29,6 +29,7 @@ def run_command_and_get_output(command):
             text=True
         )
         return process.stdout.strip()
+
     except subprocess.CalledProcessError as e:
         return e.stderr
 
@@ -39,6 +40,7 @@ for index,file in enumerate(test_files):
 
 results = {}
 EXE = sys.argv[1]
+
 
 for i in test_files:
     results.update({i:run_command_and_get_output(EXE + " < " + i+ ".test")})

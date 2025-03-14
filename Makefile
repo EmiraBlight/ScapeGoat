@@ -13,7 +13,7 @@ main.o: main.c ScapeGoat.c ScapeGoat.h
 run: build
 	./scapeGoat
 
-test: build
+test: build testC.py
 	python3 testC.py ./scapeGoat tests
 
 
